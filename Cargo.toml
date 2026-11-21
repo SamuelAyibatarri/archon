@@ -1,0 +1,3 @@
+[workspace]
+members = ["archon-core", "archon-tui", "archon-registry", "archon-ast", "archon-vcs", "archon-providers"]
+resolver = "2"
