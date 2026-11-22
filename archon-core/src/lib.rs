@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use uuid::Uuid;
 
 #[derive(Debug)]
@@ -10,6 +12,7 @@ pub struct Session {
     pub id: Uuid,
     pub prompt: String,
     pub tools: Vec<ToolCall>,
+    pub escalated: HashSet<String>,
 }
 
 impl Session {
@@ -18,6 +21,7 @@ impl Session {
             id: Uuid::new_v4(),
             prompt,
             tools: Vec::new(),
+            escalated: HashSet::new(),
         }
     }
 
@@ -45,5 +49,13 @@ impl Session {
 
     pub fn needs_escalation(&self, name: &str) -> bool {
         self.failures_for(name) >= 3
+    }
+
+    pub fn mark_escalated(&mut self, name: &str) {
+        self.escalated.insert(name.to_string());
+    }
+
+    pub fn should_escalate(&self, name: &str) -> bool {
+        self.needs_escalation(name) && !self.escalated.contains(name)
     }
 }
